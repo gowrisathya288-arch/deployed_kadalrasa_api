@@ -3,18 +3,15 @@ import cors from "cors";
 import nodemailer from "nodemailer";
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-// --------------------------------------
-//  INSERT YOUR EMAIL + APP PASSWORD HERE
-// --------------------------------------
-const EMAIL_USER = "gowrisathya288@gmail.com";           // <-- your Gmail ID
-const EMAIL_PASS = "dfry lgdg hbrm gpjq";  // <-- your Gmail App Password
-const EMAIL_TO   = "gowrisathya288@gmail.com"; // You can use same as EMAIL_USER
-// --------------------------------------
+// ✅ Gmail Credentials
+const EMAIL_USER = "gowrisathya288@gmail.com"; // your Gmail
+const EMAIL_PASS = "dfry lgdg hbrm gpjq";         // App Password (NOT normal password)
+const EMAIL_TO = "gowrisathya288@gmail.com";   // where you want to receive emails
 
+// 📩 Contact API
 app.post("/contact", async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -31,24 +28,25 @@ app.post("/contact", async (req, res) => {
     });
 
     await transporter.sendMail({
-      from: email,
+      from: EMAIL_USER,
       to: EMAIL_TO,
-      subject: `💬 New Contact Message from ${name}`,
+      subject: `💬 New Message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\nMessage:\n${message}`,
     });
 
-    res.json({ success: true });
+    console.log("✅ Email sent successfully");
+    res.json({ success: true, message: "Email sent successfully!" });
   } catch (err) {
-    console.error("Email Error:", err);
+    console.error("❌ Email Error:", err);
     res.status(500).json({ error: "Email sending failed" });
   }
 });
 
+// ✅ Test Route
 app.get("/getdata", (req, res) => {
-  res.json({
-    message: "Contact API is working ✅"
-  });
+  res.json({ message: "Contact API is working ✅" });
 });
 
-
-app.listen(5000, () => console.log("✅ Server running on http://localhost:5000"));
+// ✅ Use environment port for Render or 5000 locally
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
